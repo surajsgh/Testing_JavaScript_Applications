@@ -1,22 +1,14 @@
-class Cart {
-  constructor() {
-    this.items = [];
-  }
+const { db } = require("./dbConnection");
 
-  addToCart(item) {
-    this.items.push(item);
-  }
+//  CREATES THE CART
+const createCart = username => db("carts").insert({username});
 
-  removeAllItemsFromCart() {
-    this.items = [];
-  }
+// ADDS ITEMS TO THE CART
+const addToCart = (cartId, itemName) => {
+  return db("cart_items").insert({cartId, itemName});
+};
 
-  removeAnItemFromCart(item) {
-    const index = this.items.indexOf(item);
-    if(index > -1) {
-      this.items.splice(index, 1);
-    }
-  }
-}
-
-module.exports = Cart;
+module.exports = {
+  createCart,
+  addToCart
+};
