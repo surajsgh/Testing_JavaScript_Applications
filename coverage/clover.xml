@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1687086888121" clover="3.2.0">
-  <project timestamp="1687086888121" name="All files">
-    <metrics statements="33" coveredstatements="33" conditionals="3" coveredconditionals="3" methods="3" coveredmethods="3" elements="39" coveredelements="39" complexity="0" loc="33" ncloc="33" packages="1" files="3" classes="3"/>
+<coverage generated="1687092556259" clover="3.2.0">
+  <project timestamp="1687092556259" name="All files">
+    <metrics statements="53" coveredstatements="47" conditionals="3" coveredconditionals="3" methods="3" coveredmethods="3" elements="59" coveredelements="53" complexity="0" loc="53" ncloc="53" packages="1" files="4" classes="4"/>
     <file name="Cart.js" path="/Users/suraj/Desktop/Suraj/Tutorials/testing-javascript-applications/Cart.js">
-      <metrics statements="16" coveredstatements="16" conditionals="2" coveredconditionals="2" methods="2" coveredmethods="2"/>
+      <metrics statements="14" coveredstatements="14" conditionals="2" coveredconditionals="2" methods="2" coveredmethods="2"/>
       <line num="1" count="1" type="stmt"/>
       <line num="2" count="1" type="stmt"/>
       <line num="3" count="1" type="stmt"/>
@@ -18,8 +18,6 @@
       <line num="12" count="1" type="stmt"/>
       <line num="13" count="1" type="stmt"/>
       <line num="14" count="1" type="stmt"/>
-      <line num="15" count="1" type="stmt"/>
-      <line num="16" count="1" type="stmt"/>
     </file>
     <file name="dbConnection.js" path="/Users/suraj/Desktop/Suraj/Tutorials/testing-javascript-applications/dbConnection.js">
       <metrics statements="10" coveredstatements="10" conditionals="1" coveredconditionals="1" methods="1" coveredmethods="1"/>
@@ -43,6 +41,31 @@
       <line num="5" count="1" type="stmt"/>
       <line num="6" count="1" type="stmt"/>
       <line num="7" count="1" type="stmt"/>
+    </file>
+    <file name="server.js" path="/Users/suraj/Desktop/Suraj/Tutorials/testing-javascript-applications/server.js">
+      <metrics statements="22" coveredstatements="16" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      <line num="1" count="1" type="stmt"/>
+      <line num="2" count="1" type="stmt"/>
+      <line num="3" count="1" type="stmt"/>
+      <line num="4" count="1" type="stmt"/>
+      <line num="5" count="1" type="stmt"/>
+      <line num="6" count="1" type="stmt"/>
+      <line num="7" count="1" type="stmt"/>
+      <line num="8" count="1" type="stmt"/>
+      <line num="9" count="0" type="stmt"/>
+      <line num="10" count="0" type="stmt"/>
+      <line num="11" count="1" type="stmt"/>
+      <line num="12" count="1" type="stmt"/>
+      <line num="13" count="1" type="stmt"/>
+      <line num="14" count="0" type="stmt"/>
+      <line num="15" count="0" type="stmt"/>
+      <line num="16" count="0" type="stmt"/>
+      <line num="17" count="0" type="stmt"/>
+      <line num="18" count="1" type="stmt"/>
+      <line num="19" count="1" type="stmt"/>
+      <line num="20" count="1" type="stmt"/>
+      <line num="21" count="1" type="stmt"/>
+      <line num="22" count="1" type="stmt"/>
     </file>
   </project>
 </coverage>
