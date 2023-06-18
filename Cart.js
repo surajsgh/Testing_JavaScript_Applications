@@ -7,6 +7,10 @@ class Cart {
     this.items.push(item);
   }
 
+  removeAllItemsFromCart() {
+    this.items = [];
+  }
+
   removeAnItemFromCart(item) {
     const index = this.items.indexOf(item);
     if(index > -1) {

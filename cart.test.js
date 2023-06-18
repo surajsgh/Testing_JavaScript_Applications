@@ -23,3 +23,11 @@ test("The removeAnItemFromCart function can remove an item to the cart.", () => 
    //  ASSERTS
   expect(cart.items).toEqual([]);
 });
+
+test("The removeAllItemsFromCart function can remove an item to the cart.", () => {
+  const cart = new Cart();
+  cart.addToCart('Cheesecake');
+  cart.addToCart('Cupcake');
+  cart.removeAllItemsFromCart();
+  expect(cart.items).toEqual([]);
+})
