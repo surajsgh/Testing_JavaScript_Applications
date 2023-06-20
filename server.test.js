@@ -9,6 +9,10 @@ const addItems = (username, item) => {
 
 const getItems = username => fetch(`${apiRoot}/carts/${username}/items`, { method: 'GET'});
 
+// SOMETIMES WHILE PASSING TEST CASES, JEST DOESN'T EXIT. TO DETECT WHAT CAUSED THIS, WE USE --detectOpenHandle.
+// USING --detectOpenHandle TELLS US WHAT CAUSED THAT ISSUE.
+// WE USE afterAll HOOK TO CLOSE THE CONNECTION TO FIX THIS PROBLEM.
+// ALTERNATIVE SOLUTION IS TO USE --forceExit IN NPM PACKAGE ALONG WITH --detectOpenHandle
 afterAll(() => app.close());
 
 test("Adding items to a cart", async () => {

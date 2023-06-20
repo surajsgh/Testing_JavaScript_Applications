@@ -1,13 +1,17 @@
 const { createCart, addToCart } = require('./Cart.js');
 const { db, closeConnection } = require("./dbConnection");
 
+//  TO CLEANUP THE DATABASE RIGHT BEFORE WE RUN DIFFERENT TESTS
 beforeEach(async () => {
   await db("carts").truncate();
   await db("cart_items").truncate();
 })
 
+// IT'S CONSIDERED A GOOD PRACTICE TO CLOSE YOUR CONNECTION RIGHT AFTER ALL OF YOUR TESTS HAVE RUN.
+// OTHERWISE, JEST WON'T EXIT.
 afterAll(async () => await closeConnection());
 
+//  TEST SUITES
 test("createCart creates a cart with the username", async () => {
   await createCart("Suraj");
   const result = await db.select("username").from("carts");
@@ -23,6 +27,7 @@ test("addToCart adds an item to the cart", async () => {
   const result = await db.select().from("cart_items");
   expect(result).toEqual([{ cartId, itemName: "Cheesecake"}]);
 })
+
 /*
 //  TEST HELPS US TO ORGANISE MULTIPLE TESTS WITHIN A SINGLE FILE AND INDICATES WHAT SHOULD RUN
 test("The addToCart function can add an item to the cart.", () => {
