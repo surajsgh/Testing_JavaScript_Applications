@@ -1,1 +1,1 @@
-# Testing_JavaScript_Applications
+# Testing JavaScript Applications
