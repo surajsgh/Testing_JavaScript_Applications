@@ -1,5 +1,5 @@
 const fetch = require('isomorphic-fetch');
-const app = require('./server');
+const { app, carts, inventory } = require('./server');
 
 const apiRoot = 'http://localhost:3000';
 
@@ -15,13 +15,46 @@ const getItems = username => fetch(`${apiRoot}/carts/${username}/items`, { metho
 // ALTERNATIVE SOLUTION IS TO USE --forceExit IN NPM PACKAGE ALONG WITH --detectOpenHandle
 afterAll(() => app.close());
 
-test("Adding items to a cart", async () => {
-  const initialItemsResponse = await getItems('Suraj');
-  expect(initialItemsResponse.status).toEqual(404);
+describe("addItems", () => {
+  beforeEach(() => carts.clear());
+  beforeEach(() => inventory.set("Cheesecake", 1));
+  
+  //  BREAKING THE WHOLE STEPS INTO SMALLER AND ATOMIC UNITS HELP US TO IDENTIFY THE POTENTIAL BUGS TOO SOON
+  test("addItem Successful Response", async () => {
+    const addItemResponse = await addItems("Lucal", "Cheesecake");
+    expect(await addItemResponse.status).toBe(200);
+    expect(await addItemResponse.json()).toEqual(["Cheesecake"]);
+  });
 
-  const addItemsResponse = await addItems('Suraj', 'Cheesecake');
-  expect(await addItemsResponse.json()).toEqual(['Cheesecake']);
+  test("inventory Successful Response", async () => {
+    await addItems("Lucas", "Cheesecake");
+    expect(inventory.get("Cheesecake")).toBe(0);
+  });
 
-  const finalItemsResponse = await getItems('Suraj');
-  expect(await finalItemsResponse.json()).toEqual(['Cheesecake']);
-})
+  test("cart successful Response", async () => {
+    await addItems("Keith", "Cheesecake");
+    expect(carts.get("Keith")).toEqual(["Cheesecake"]);
+  });
+
+  test("addItem Unsuccessful response", async () => {
+    const addItemResponse = await addItems("Lucal", "cupcake");
+    expect(await addItemResponse.status).toBe(404);
+  });
+});
+
+  //  WE HAVE WRITTENN ADD TO CART TEST CASE TOO RIGOROUSLY BUT LET'S ASSUME IF ANY ERROR OCCURS
+  //  WE'LL FAIL TO IDENTIFY WHERE THE ERROR IS COMING FROM
+  //  SO WE'LL SEPRATE THE FOLLOWING ASSERTIONS INTO MANY SEPARATE TEST CASES.
+  /*
+  test("Adding items to a cart", async () => {
+    inventory.set("cheesecake", 1);
+    const addItemsResponse = await addItems("Lucas", "cheesecake");
+    expect(await addItemsResponse.json()).toEqual(["cheesecake"]);
+    expect(inventory.get("cheesecake")).toBe(0);
+
+    expect(carts.get("Lucas")).toEqual(["cheesecake"]);
+
+    const failedAddItemResponse = await addItems("Lucas", "cupcake");
+    expect(await failedAddItemResponse.status).toBe(404);
+  });
+  */
