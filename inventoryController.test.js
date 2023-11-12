@@ -1,9 +1,29 @@
-const { inventory, addToInventory } = require('./inventoryController');
+const { inventory, addToInventory, getInventory } = require('./inventoryController');
 
 beforeEach(() => inventory.clear());
 beforeEach(() => inventory.set("Cheesecake", 0));
 
+test("inventory contents", () => {
+    inventory
+        .set("Cheesecake", 1)
+        .set("macarroon", 3)
+        .set("croissant", 3)
+        .set("eclaire", 7);
+
+    const result = getInventory();
+
+    expect(result).toEqual({
+        Cheesecake: 1,
+        macarroon: 3,
+        croissant: 3,
+        eclaire: 7,
+        //  CUSTOM MATCHER LOOSELY 
+        generatedAt: expect.any(Date)
+    });
+})
+
 test("returned value", () => {
+    //  DETERMINISTIC MATCHER
     const returnedValue = addToInventory("Cheesecake", 2);
     expect(returnedValue).toBe(2);
 });
