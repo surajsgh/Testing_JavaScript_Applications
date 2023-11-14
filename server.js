@@ -1,5 +1,6 @@
 const Koa = require('koa');
 const Router = require('koa-router');
+const { getInventory } = require('./inventoryController');
 
 const app = new Koa();
 const router = new Router();
@@ -21,6 +22,11 @@ router.post('/carts/:username/items/:item', ctx => {
   const newItems = (carts.get(username) || []).concat(item);
   carts.set(username, newItems);
   ctx.body = newItems;
+});
+
+router.get('/inventory', ctx => {
+  console.log('Test');
+  ctx.body = getInventory()
 });
 
 app.use(router.routes());

@@ -1,5 +1,6 @@
 const fetch = require('isomorphic-fetch');
 const { app, carts, inventory } = require('./server');
+const { getInventory } = require("./inventoryController");
 
 const apiRoot = 'http://localhost:3000';
 
@@ -8,6 +9,10 @@ const addItems = (username, item) => {
 }
 
 const getItems = username => fetch(`${apiRoot}/carts/${username}/items`, { method: 'GET'});
+
+const sendGetInventoryRequest = () => {
+  return fetch(`${apiRoot}/inventory`, { method: 'GET' });
+}
 
 // SOMETIMES WHILE PASSING TEST CASES, JEST DOESN'T EXIT. TO DETECT WHAT CAUSED THIS, WE USE --detectOpenHandle.
 // USING --detectOpenHandle TELLS US WHAT CAUSED THAT ISSUE.
@@ -39,6 +44,41 @@ describe("addItems", () => {
   test("addItem Unsuccessful response", async () => {
     const addItemResponse = await addItems("Lucal", "cupcake");
     expect(await addItemResponse.status).toBe(404);
+  });
+});
+
+describe("Testing inventory contents", () => {
+  beforeEach(() => inventory.clear());
+
+  test("fetching inventory", async () => {
+    inventory.set("cheesecake", 1).set("macarroon", 2);
+    const getInventoryResponse = await sendGetInventoryRequest();
+
+    const expected = {
+      ...getInventory(),
+      generatedAt: expect.anything()
+    };
+
+    /*
+      //  CIRCULAR ASSERTION
+      //  WE'RE COMPARING THE SAME PIECE OF FUNCTION CODE
+      //  THIS MIGHT CAUSE THE CONFUSION AND RAISE THE BUGS INTO THE PRODUCTION
+      //  A SIMPLE WAY TO RESOLVE THIS WOULD BE TO REPLACE THE 
+
+      const expected = {
+        ...getInventory(),
+        generatedAt: expect.anything()
+      };
+
+      WITH 
+
+      const expected = {
+        cheesecake: 1, 
+        macarroon: 2
+        generatedAt: expect.anything()
+      };
+    */
+    expect(await getInventoryResponse.json()).toEqual(expected);
   });
 });
 
