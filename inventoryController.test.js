@@ -1,6 +1,11 @@
 const { inventory, addToInventory, getInventory } = require('./inventoryController');
 const logger = require('./logger');
 
+jest.mock('./logger', () => ({
+    logInfo: jest.fn(),
+    logError: jest.fn()
+}));
+
 beforeEach(() => inventory.clear());
 beforeEach(() => inventory.set("Cheesecake", 0));
 
@@ -35,11 +40,39 @@ test("inventory contents", () => {
 
 describe("logging for addToInventory and getInventory", () => {
     //  THIS IS HOW WE SPY ON THE HELPER FUNCTION THAT WE'RE USING INSIDE OF THE FUNCTION.
-    beforeEach(() => jest.spyOn(logger, "logInfo"));
+    beforeEach(() => {
+        inventory.clear();
+        //  THIS IS HOW WE USE THE STUBS TO CHANGE THE RESPONSE OF THE FUNCTION
+        /*
+        YOU COULD REPLACE 
+        mockImplementation(() => {
+            return { rss: 123456 };
+        });
+
+        WITH 
+
+        mockReturnValue({
+            return { rss: 123456 };
+        );
+        */  
+        jest.spyOn(process, "memoryUsage").mockImplementation(() => {
+            return { rss: 123456 };
+        });
+    });
+
+    //  THIS IS HOW WE USE THE STUBS TO CHANGE THE RESPONSE OF THE FUNCTION
+    /*
+    NOTE: IT'S RECOMMENDED NOT TO USE STUBS TOO MUCH. USING IT TOO MUCH WOULD CAUSE YOUR TEST CASES TO LESS RESEMBLE 
+    YOUR APP'S BEHAVIOUR.
+    */
+    beforeAll(() => {
+        jest.spyOn(logger, "logInfo").mockImplementation();
+    });
 
     //  TO CLEAR THE MOCKS.
     //  ALT: beforeEach(() => jest.clearAllMocks());
-    afterEach(() => logger.logInfo.mockClear());
+    // afterEach(() => logger.logInfo.mockClear());
+    beforeEach(() => jest.clearAllMocks());
 
     test("valid addToInventory", () => {
         addToInventory("cheesecake", 2);
@@ -48,8 +81,7 @@ describe("logging for addToInventory and getInventory", () => {
 
         const firstCallArg = logger.logInfo.mock.calls[0];
         const [firstArg, secondArg] = firstCallArg;
-
-        expect(firstArg).toEqual[{ item: 'cheesecake', newQuantity: 2 }];
+        expect(firstArg).toEqual[{ item: 'cheesecake', newQuantity: 2, rss: 123456 }];
         expect(secondArg).toEqual['Items added into the inventory successfully.'];
     });
 
@@ -61,10 +93,10 @@ describe("logging for addToInventory and getInventory", () => {
             // No op
         }
 
-        console.log(logger.logError);
-        expect(logger.logError.mock.calls).toHaveLength(1);
+        console.log(logError);
+        expect(logError.mock.calls).toHaveLength(1);
 
-        const firstCallArg = logger.logError.mock.calls[0];
+        const firstCallArg = logError.mock.calls[0];
         const [firstArg, secondArg] = firstCallArg;
 
         expect(firstArg).toEqual[{ item: 'cheesecake', newQuantity: 'jnsjks' }];
