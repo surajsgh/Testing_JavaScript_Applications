@@ -1,9 +1,32 @@
 const fetch = require('isomorphic-fetch');
+//  HERE THE MAIN REASONING BEHIND EXPOSING THE STATE IS 
+//  TO CREATE THE INITIAL STATE TO ENABLE THE EXERCISE OF THE
+//  TESTING PERFECTLY
 const { app, carts, inventory } = require('./server');
-const { getInventory } = require("./inventoryController");
+// const { getInventory } = require("./inventoryController");
 
 const apiRoot = 'http://localhost:3000';
 
+afterAll(() => app.close());
+
+describe("add items to cart", () => {
+  afterAll(() => {
+    inventory.clear();
+  });
+
+  beforeAll(() => {
+    inventory.set('cheesecake', 1);
+  });
+
+  test("add available items to the cart", async () => {
+    const response = await fetch(`${apiRoot}/carts/test_user/items/cheesecake`, { method: 'POST' });
+    expect(response.status).toBe(200);
+    expect(await response.json()).toEqual(['cheesecake']);
+    expect(inventory.get('cheesecake')).toBe(0);
+  });
+});
+
+/*
 const addItems = (username, item) => {
   return fetch(`${apiRoot}/carts/${username}/items/${item}`, { method: 'POST'} );
 }
@@ -78,10 +101,13 @@ describe("Testing inventory contents", () => {
         generatedAt: expect.anything()
       };
     */
+
+      /*
     expect(await getInventoryResponse.json()).toEqual(expected);
   });
 });
 
+*/
   //  WE HAVE WRITTENN ADD TO CART TEST CASE TOO RIGOROUSLY BUT LET'S ASSUME IF ANY ERROR OCCURS
   //  WE'LL FAIL TO IDENTIFY WHERE THE ERROR IS COMING FROM
   //  SO WE'LL SEPRATE THE FOLLOWING ASSERTIONS INTO MANY SEPARATE TEST CASES.

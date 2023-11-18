@@ -47,4 +47,8 @@ router.delete('/carts/:username/items/:item', ctx => {
 
 app.use(router.routes());
 
-module.exports = app.listen(3000);
+module.exports = {
+  app: app.listen(3000),
+  inventory,
+  carts
+};
