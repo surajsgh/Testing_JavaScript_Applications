@@ -1,11 +1,12 @@
 const Koa = require('koa');
 const Router = require('koa-router');
-// const { getInventory } = require('./inventoryController');
+const { getInventory, addItemToCart, carts } = require('./cartController.js');
+const { inventory } = require('./inventoryController.js');
 
 const app = new Koa();
 const router = new Router();
-const carts = new Map();
-const inventory = new Map();
+// const carts = new Map();
+// const inventory = new Map();
 
 router.get('/carts/:username/items', ctx => {
   const cart = carts.get(ctx.params.username);
@@ -14,16 +15,14 @@ router.get('/carts/:username/items', ctx => {
 
 router.post('/carts/:username/items/:item', ctx => {
   const { username, item } = ctx.params;
-  const isAvailable = inventory.has(item) && inventory.get(item) > 0;
-  if(!isAvailable) {
-    ctx.body = { message: `${item} is unavailable.` };
-    ctx.status = 404;
+  try {
+    const newItems = addItemToCart(username, item);
+    ctx.body = newItems;
+  } catch (error) {
+    ctx.body = {message: error.message};
+    ctx.status = error.statusCode;
     return;
   }
-  const newItems = (carts.get(username) || []).concat(item);
-  carts.set(username, newItems);
-  inventory.set(item, inventory.get(item) - 1);
-  ctx.body = newItems;
 });
 
 router.delete('/carts/:username/items/:item', ctx => {

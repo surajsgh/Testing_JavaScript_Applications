@@ -1,4 +1,4 @@
-const { inventory, addToInventory, getInventory } = require('./inventoryController');
+const { inventory, addToInventory, getInventory, removeInventoryFromItem } = require('./inventoryController');
 const logger = require('./logger');
 
 jest.mock('./logger', () => ({
@@ -144,3 +144,25 @@ test("Cancels operation for invalid operation", () => {
     expect(Array.from(inventory.entries())).toHaveLength(1);
     */
 });
+
+describe('removeInventoryFromItem', () => {
+    afterAll(() => {
+        inventory.clear();
+    });
+
+    test('Reomve an available item from inventory', () => {
+        inventory.set('cheesecake', 1);
+        removeInventoryFromItem('cheesecake');
+        expect(inventory.get('cheesecake')).toBe(0);
+    })
+
+    test('Reomve an unavailable item from inventory', () => {
+        inventory.set('cheesecake', 0);
+        try {
+            removeInventoryFromItem('cheesecake');    
+        } catch (error) {
+            expect(error.message).toEqual('cheesecake is unavailable.');
+            expect(error.statusCode).toBe(404); 
+        }
+    })
+})

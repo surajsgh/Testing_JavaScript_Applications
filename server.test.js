@@ -3,7 +3,7 @@ const fetch = require('isomorphic-fetch');
 //  TO CREATE THE INITIAL STATE TO ENABLE THE EXERCISE OF THE
 //  TESTING PERFECTLY
 const { app, carts, inventory } = require('./server');
-// const { getInventory } = require("./inventoryController");
+const { addItemToCart } = require("./inventoryController");
 
 const apiRoot = 'http://localhost:3000';
 

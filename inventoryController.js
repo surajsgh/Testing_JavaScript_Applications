@@ -24,8 +24,19 @@ const addToInventory = (item, quantity) => {
     return newQuantity;
 }
 
+const removeInventoryFromItem = item => {
+    if(!inventory.has(item) || !inventory.get(item) > 0) {
+        const err = new Error(`${item} is unavailable.`);
+        err.statusCode = 404;
+        throw err;
+    }
+
+    inventory.set(item, inventory.get(item) - 1);
+}
+
 module.exports = {
     inventory,
     addToInventory,
-    getInventory
+    getInventory,
+    removeInventoryFromItem
 }
