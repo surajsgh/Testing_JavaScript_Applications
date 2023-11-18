@@ -12,17 +12,26 @@ afterAll(() => app.close());
 describe("add items to cart", () => {
   afterAll(() => {
     inventory.clear();
+    carts.clear();
   });
 
   beforeAll(() => {
-    inventory.set('cheesecake', 1);
+    carts.set('test_user', []);
   });
 
   test("add available items to the cart", async () => {
+    inventory.set('cheesecake', 1);
     const response = await fetch(`${apiRoot}/carts/test_user/items/cheesecake`, { method: 'POST' });
     expect(response.status).toBe(200);
     expect(await response.json()).toEqual(['cheesecake']);
     expect(inventory.get('cheesecake')).toBe(0);
+    expect(carts.get('test_user')).toEqual(['cheesecake']);
+  });
+
+  test("add unavailable items to the cart", async () => {
+    const response = await fetch(`${apiRoot}/carts/test_user/items/cheesecake`, { method: 'POST' });
+    expect(response.status).toBe(404);
+    expect(await response.json()).toEqual({ message: 'cheesecake is unavailable.'});
   });
 });
 
