@@ -2,10 +2,13 @@ const crypto = require('crypto');
 
 const { hashPassword, credentialsAreValid, authenticationMiddleware, users } = require('./authenticationController');
 const { app } = require('./server');
+const { db } = require('./dbConnection');
 
-afterEach(() => users.clear());
+// afterEach(() => users.clear());
 
 afterAll(() => app.close());
+
+beforeEach(() => db('users').truncate());
 
 //  TESTING MIDDLEWARE
 describe('hash password', () => {
@@ -22,9 +25,15 @@ describe('hash password', () => {
 });
 
 describe('credentialsAreValid', () => {
-    test('successful valid credentials', () => {
-        users.set('test_user', { email: 'test@email.com', password: hashPassword('Test@1234')});
-        const response = credentialsAreValid('test_user', 'Test@1234');
+    test('successful valid credentials', async () => {
+        // users.set('test_user', { email: 'test@email.com', password: hashPassword('Test@1234')});
+        await db('users').insert({
+            username: 'test_user',
+            passwordHash: hashPassword('Test@1234'),
+            email: 'test@email.com'
+        })
+        const response = await credentialsAreValid('test_user', 'Test@1234');
+        console.log(response);
         expect(response).toBe(true);
     });
 });

@@ -1,6 +1,6 @@
 const crypto = require('crypto');
 
-const users = new Map();
+const { db } = require('./dbConnection');
 
 const hashPassword = password => {
     const hash = crypto.createHash('sha256');
@@ -8,14 +8,10 @@ const hashPassword = password => {
     return hash.digest('hex');
 }
 
-const credentialsAreValid = (username, password) => {
-    const userExists = users.has(username);
-    if(!userExists) {
-        return false;
-    }
-
-    const userPassword = users.get(username).password;
-    return userPassword === hashPassword(password);
+const credentialsAreValid = async (username, password) => {
+    const user = await db('users').select().where({ username }).first();
+    if(!user) return false;
+    return user.passwordHash === hashPassword(password);
 }
 
 const authenticationMiddleware = async (ctx, next) => {
@@ -24,9 +20,7 @@ const authenticationMiddleware = async (ctx, next) => {
         const credentials = Buffer.from(authHeader.slice('basic'.length + 1), 'base64').toString();
         const [username, password] = credentials.split(':');
 
-        console.log(username, password);
-        console.log(credentialsAreValid(username, password));
-        if(!credentialsAreValid(username, password)) {
+        if(!await credentialsAreValid(username, password)) {
             throw new Error('Invalid Credentials');
         }
     } catch (error) {
@@ -41,6 +35,5 @@ const authenticationMiddleware = async (ctx, next) => {
 module.exports = {
     hashPassword,
     credentialsAreValid,
-    authenticationMiddleware,
-    users
+    authenticationMiddleware
 }
