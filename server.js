@@ -3,15 +3,23 @@ const Router = require('koa-router');
 const bodyParser = require('koa-body-parser');
 const { getInventory, addItemToCart, carts } = require('./cartController.js');
 const { inventory } = require('./inventoryController.js');
-const { hashPassword } = require('./authenticationController.js');
+const { hashPassword, users, authenticationMiddleware } = require('./authenticationController.js');
 
 const app = new Koa();
 const router = new Router();
-const users = new Map();
+// const users = new Map();
 // const carts = new Map();
 // const inventory = new Map();
 
 app.use(bodyParser());
+
+app.use(async (ctx, next) => {
+  if(ctx.url.startsWith('/carts')) {
+    return await authenticationMiddleware(ctx, next);
+  }
+
+  next();
+});
 
 router.put('/users/:username', ctx => {
   const { username } = ctx.params;

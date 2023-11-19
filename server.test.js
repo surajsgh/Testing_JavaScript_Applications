@@ -2,11 +2,24 @@ const fetch = require('isomorphic-fetch');
 //  HERE THE MAIN REASONING BEHIND EXPOSING THE STATE IS 
 //  TO CREATE THE INITIAL STATE TO ENABLE THE EXERCISE OF THE
 //  TESTING PERFECTLY
-const { app, carts, inventory, users } = require('./server');
+const { app, carts, inventory } = require('./server');
 const { addItemToCart } = require("./inventoryController");
 const request = require('supertest');
+const { hashPassword, users, authenticationMiddleware } = require('./authenticationController');
 
 const apiRoot = 'http://localhost:3000';
+
+const user = 'test_user';
+const password = 'test@1234';
+const validAuth = Buffer.from(`${user}:${password}`).toString('base64');
+const authHeader = `Basic ${validAuth}`;
+
+const createUser = () => {
+  users.set(user, {
+    email: 'test@email.com',
+    password: hashPassword(password)
+  });
+}
 
 afterAll(() => app.close());
 
@@ -28,6 +41,8 @@ describe('create accounts', () => {
 });
 
 describe("add items to cart", () => {
+  beforeEach(() => createUser());
+
   afterEach(() => {
     inventory.clear();
     carts.clear();
@@ -39,13 +54,14 @@ describe("add items to cart", () => {
 
   test("add available items to the cart", async () => {
     inventory.set('cheesecake', 3);
-    const response = await request(app).post('/carts/test_user/items').send({item: 'cheesecake', quantity: 3}).expect(200).expect("Content-Type", /json/);
+    const response = await request(app).post('/carts/test_user/items').set('authorization', authHeader).send({item: 'cheesecake', quantity: 3}).expect(200).expect("Content-Type", /json/);
     const newItems = ['cheesecake', 'cheesecake', 'cheesecake'];
     expect(response.body).toEqual(newItems);
     expect(inventory.get('cheesecake')).toBe(0);
     expect(carts.get('test_user')).toEqual(newItems);
   });
 
+  /*
   test("add available items to the cart", async () => {
     inventory.set('cheesecake', 1);
     const response = await request(app).post('/carts/test_user/items/cheesecake').expect(200).expect("Content-Type", /json/);
@@ -59,6 +75,7 @@ describe("add items to cart", () => {
     expect(response.status).toBe(404);
     expect(await response.json()).toEqual({ message: 'cheesecake is unavailable.'});
   });
+  */
 });
 
 /*

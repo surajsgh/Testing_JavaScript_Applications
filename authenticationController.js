@@ -1,5 +1,6 @@
 const crypto = require('crypto');
-const { users } = require('./server');
+
+const users = new Map();
 
 const hashPassword = password => {
     const hash = crypto.createHash('sha256');
@@ -23,10 +24,13 @@ const authenticationMiddleware = async (ctx, next) => {
         const credentials = Buffer.from(authHeader.slice('basic'.length + 1), 'base64').toString();
         const [username, password] = credentials.split(':');
 
+        console.log(username, password);
+        console.log(credentialsAreValid(username, password));
         if(!credentialsAreValid(username, password)) {
             throw new Error('Invalid Credentials');
         }
     } catch (error) {
+        console.log('Test');
         ctx.status = 401;
         ctx.body = { message: 'Please provide valid credentials.'};
         return;
@@ -37,5 +41,6 @@ const authenticationMiddleware = async (ctx, next) => {
 module.exports = {
     hashPassword,
     credentialsAreValid,
-    authenticationMiddleware
+    authenticationMiddleware,
+    users
 }

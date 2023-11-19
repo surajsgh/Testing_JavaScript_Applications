@@ -1,7 +1,7 @@
 const crypto = require('crypto');
 
-const { hashPassword, credentialsAreValid, authenticationMiddleware } = require('./authenticationController');
-const { users, app } = require('./server');
+const { hashPassword, credentialsAreValid, authenticationMiddleware, users } = require('./authenticationController');
+const { app } = require('./server');
 
 afterEach(() => users.clear());
 
