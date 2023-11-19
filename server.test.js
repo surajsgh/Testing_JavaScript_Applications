@@ -4,13 +4,14 @@ const fetch = require('isomorphic-fetch');
 //  TESTING PERFECTLY
 const { app, carts, inventory } = require('./server');
 const { addItemToCart } = require("./inventoryController");
+const request = require('supertest');
 
 const apiRoot = 'http://localhost:3000';
 
 afterAll(() => app.close());
 
 describe("add items to cart", () => {
-  afterAll(() => {
+  afterEach(() => {
     inventory.clear();
     carts.clear();
   });
@@ -20,10 +21,18 @@ describe("add items to cart", () => {
   });
 
   test("add available items to the cart", async () => {
+    inventory.set('cheesecake', 3);
+    const response = await request(app).post('/carts/test_user/items').send({item: 'cheesecake', quantity: 3}).expect(200).expect("Content-Type", /json/);
+    const newItems = ['cheesecake', 'cheesecake', 'cheesecake'];
+    expect(response.body).toEqual(newItems);
+    expect(inventory.get('cheesecake')).toBe(0);
+    expect(carts.get('test_user')).toEqual(newItems);
+  });
+
+  test("add available items to the cart", async () => {
     inventory.set('cheesecake', 1);
-    const response = await fetch(`${apiRoot}/carts/test_user/items/cheesecake`, { method: 'POST' });
-    expect(response.status).toBe(200);
-    expect(await response.json()).toEqual(['cheesecake']);
+    const response = await request(app).post('/carts/test_user/items/cheesecake').expect(200).expect("Content-Type", /json/);
+    expect(response.body).toEqual(['cheesecake']);
     expect(inventory.get('cheesecake')).toBe(0);
     expect(carts.get('test_user')).toEqual(['cheesecake']);
   });

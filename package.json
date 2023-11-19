@@ -20,12 +20,14 @@
   "dependencies": {
     "knex": "^2.4.2",
     "koa": "^2.14.2",
+    "koa-body-parser": "^1.1.2",
     "koa-router": "^12.0.0",
     "pino": "^8.16.1",
     "sqlite3": "^5.1.6"
   },
   "devDependencies": {
     "isomorphic-fetch": "^3.0.0",
-    "jest": "^29.5.0"
+    "jest": "^29.5.0",
+    "supertest": "^6.3.3"
   }
 }

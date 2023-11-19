@@ -1,5 +1,6 @@
 const Koa = require('koa');
 const Router = require('koa-router');
+const bodyParser = require('koa-body-parser');
 const { getInventory, addItemToCart, carts } = require('./cartController.js');
 const { inventory } = require('./inventoryController.js');
 
@@ -8,10 +9,28 @@ const router = new Router();
 // const carts = new Map();
 // const inventory = new Map();
 
+app.use(bodyParser());
+
 router.get('/carts/:username/items', ctx => {
   const cart = carts.get(ctx.params.username);
   cart ? (ctx.body = cart) : (ctx.status = 404);
 });
+
+router.post('/carts/:username/items', ctx => {
+  const { username } = ctx.params;
+  const { item, quantity } = ctx.request.body;
+
+  for (let index = 0; index < quantity; index++) {
+    try {
+      const newItems = addItemToCart(username, item);
+      ctx.body = newItems;
+    } catch (error) {
+      ctx.body = { message: error.message };
+      ctx.status = error.code;
+      return;
+    }
+  }
+})
 
 router.post('/carts/:username/items/:item', ctx => {
   const { username, item } = ctx.params;
