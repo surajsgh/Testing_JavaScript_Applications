@@ -3,7 +3,7 @@ const Router = require('koa-router');
 const bodyParser = require('koa-body-parser');
 const { getInventory, addItemToCart, carts } = require('./cartController.js');
 const { inventory } = require('./inventoryController.js');
-const crypto = require('crypto');
+const { hashPassword } = require('./authenticationController.js');
 
 const app = new Koa();
 const router = new Router();
@@ -12,12 +12,6 @@ const users = new Map();
 // const inventory = new Map();
 
 app.use(bodyParser());
-
-const hashPassword = password => {
-  const hash = crypto.createHash('sha256');
-  hash.update(password);
-  return hash.digest('hex');
-}
 
 router.put('/users/:username', ctx => {
   const { username } = ctx.params;
