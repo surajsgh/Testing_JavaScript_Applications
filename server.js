@@ -3,13 +3,37 @@ const Router = require('koa-router');
 const bodyParser = require('koa-body-parser');
 const { getInventory, addItemToCart, carts } = require('./cartController.js');
 const { inventory } = require('./inventoryController.js');
+const crypto = require('crypto');
 
 const app = new Koa();
 const router = new Router();
+const users = new Map();
 // const carts = new Map();
 // const inventory = new Map();
 
 app.use(bodyParser());
+
+const hashPassword = password => {
+  const hash = crypto.createHash('sha256');
+  hash.update(password);
+  return hash.digest('hex');
+}
+
+router.put('/users/:username', ctx => {
+  const { username } = ctx.params;
+  const { email, password } = ctx.request.body;
+  const userAlreadyExists = users.get(username);
+
+  if(userAlreadyExists) {
+    ctx.body = { message: `${username} already exists.`};
+    ctx.status = 409;
+    return;
+  }
+
+  users.set(username, { email, password: hashPassword(password)});
+  ctx.body = { message: `${username} created successfully.` };
+  return;
+})
 
 router.get('/carts/:username/items', ctx => {
   const cart = carts.get(ctx.params.username);
@@ -68,5 +92,7 @@ app.use(router.routes());
 module.exports = {
   app: app.listen(3000),
   inventory,
-  carts
+  carts,
+  hashPassword,
+  users
 };

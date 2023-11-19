@@ -2,13 +2,21 @@ const fetch = require('isomorphic-fetch');
 //  HERE THE MAIN REASONING BEHIND EXPOSING THE STATE IS 
 //  TO CREATE THE INITIAL STATE TO ENABLE THE EXERCISE OF THE
 //  TESTING PERFECTLY
-const { app, carts, inventory } = require('./server');
+const { app, carts, inventory, users } = require('./server');
 const { addItemToCart } = require("./inventoryController");
 const request = require('supertest');
 
 const apiRoot = 'http://localhost:3000';
 
 afterAll(() => app.close());
+
+describe('create accounts', () => {
+  test('create a new account', async () => {
+    const response = await request(app).put('/users/test_user').send({ email: 'test@email.com', password: 'test@1234'}).expect(200).expect("Content-Type", /json/);
+    expect(response.body).toEqual({ message: 'test_user created successfully.'});
+    expect(users.get('test_user')).toEqual({email: 'test@email.com', password: 'c001fd08c8524ff609f6eda2b34d0bb7e4c560954fcc15fde8d9b46625bc9158'});
+  });
+});
 
 describe("add items to cart", () => {
   afterEach(() => {
